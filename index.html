@@ -523,7 +523,7 @@
                         </div>
                         <button type="submit" class="btn-primary order-submit-btn" id="submitOrder"
                             style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                            Email My Order to Sales@Ekian.dev →
+                            Email My Order to ekian.dev@gmail.com →
                         </button>
                         <p
                             style="font-size: 0.85rem; color: var(--navy-900); text-align: center; margin-top: 12px; font-weight: 500;">
@@ -578,7 +578,7 @@
                 <div>
                     <h4>Contact</h4>
                     <div class="footer-links">
-                        <a href="mailto:hello@ekian.dev">hello@ekian.dev</a>
+                        <a href="mailto:ekian.dev@gmail.com">ekian.dev@gmail.com</a>
                         <a href="#">Discord</a>
                         <a href="#">Twitter / X</a>
                         <a href="#">Instagram</a>
@@ -624,7 +624,7 @@
 
             // Construct email body
             const subject = encodeURIComponent(`New Ekian.dev Order - ${plan.toUpperCase()} Plan - ${name}`);
-            const bodyText = `Hello Ekian.dev Sales,
+            const bodyText = `Hello Ekian,
 
 I would like to place an order for the ${plan.toUpperCase()} Plan.
 
@@ -645,7 +645,7 @@ Looking forward to hearing from you!`;
             const body = encodeURIComponent(bodyText);
 
             // Trigger mailto link
-            window.location.href = `mailto:Sales@Ekian.dev?subject=${subject}&body=${body}`;
+            window.location.href = `mailto:ekian.dev@gmail.com?subject=${subject}&body=${body}`;
 
             // Show temporary success feedback on the button
             const submitBtn = document.getElementById('submitOrder');
