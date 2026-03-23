@@ -1875,3 +1875,33 @@ close-modal {
 .portfolio-item {
     cursor: pointer;
 }
+
+/* Custom File Input Styling */
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    background: #0a0a0a;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #a1a1aa;
+    font-family: inherit;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+input[type="file"]::file-selector-button {
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin-right: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: #e0e0e0;
+}
