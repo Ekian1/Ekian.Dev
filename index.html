@@ -494,8 +494,7 @@
                                 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; margin-top: -6px;">
                                 Upload inspiration or your current branding. You can upload multiple files if your plan
                                 allows.</p>
-                            <input type="file" id="orderReference" name="references" accept="image/*" multiple
-                                style="background: var(--white); cursor: pointer; padding: 10px; border: 1px dashed var(--sky-400); border-radius: var(--radius-sm); width: 100%; font-family: inherit;">
+                            <input type="file" id="orderReference" name="references" accept="image/*" multiple>
                         </div>
                     </div>
 
@@ -516,22 +515,22 @@
 
                     <!-- Checkout Action -->
                     <div class="email-submit-placeholder"
-                        style="border: 1px solid var(--sky-200); background: var(--sky-50);">
-                        <div class="email-submit-badge" style="margin-bottom: 20px;">
-                            <span class="email-submit-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>
+                        style="border: 1px solid rgba(255, 255, 255, 0.1); background: #ffffff; padding: 24px; border-radius: 8px;">
+                        <div class="email-submit-badge" style="margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
+                            <span class="email-submit-icon" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 6px; color: #000;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            </span>
                             <div>
-                                <strong style="color: var(--navy-900);">Submit via Email</strong>
-                                <p style="color: var(--text-muted);">This will open your default email app to send us
-                                    your project details directly.</p>
+                                <strong style="color: #000000; display: block; font-size: 1.05rem; margin-bottom: 4px;">Submit via Email</strong>
+                                <p style="color: #555555; font-size: 0.9rem; margin: 0; line-height: 1.4;">This will open your default email app to send us your project details directly.</p>
                             </div>
                         </div>
                         <button type="submit" class="btn-primary order-submit-btn" id="submitOrder"
-                            style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 16px; font-size: 1.05rem; background: #000000; color: #ffffff; border-radius: 8px; font-weight: 600; border: 1px solid rgba(0, 0, 0, 0.8); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.15); transition: all 0.2s ease;">
                             Email My Order to ekian.dev@gmail.com →
                         </button>
-                        <p
-                            style="font-size: 0.85rem; color: var(--navy-900); text-align: center; margin-top: 12px; font-weight: 500;">
-                            ⚠️ Please remember to attach your reference images to the email!
+                        <p style="font-size: 0.85rem; color: #555555; text-align: center; margin-top: 16px; font-weight: 500;">
+                            <span style="opacity: 0.8;">⚠️</span> Please remember to attach your reference images to the email!
                         </p>
                     </div>
 
