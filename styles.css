@@ -916,3 +916,46 @@ html, body {
 @keyframes marchingAnts {
     to { stroke-dashoffset: -12; }
 }
+
+/* ============ HEADER ICON BUTTONS ============ */
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    transition: all var(--transition);
+}
+.icon-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text);
+}
+
+/* ============ MOBILE SUPPORT ============ */
+@media (max-width: 768px) {
+    .desktop-only { display: none !important; }
+    
+    .menu-item > span { display: none; }
+    .menu-item::after { content: attr(data-menu); text-transform: capitalize; }
+    .menu-item { padding: 0 8px; font-size: 11px; }
+    
+    .menu-logo span { display: none; }
+    
+    :root {
+        --panel-width: 220px;
+        --toolbar-width: 42px;
+    }
+    
+    #tool-options-bar { 
+        padding: 0 8px; 
+        gap: 10px;
+    }
+    .tool-option-group label { display: none; }
+    
+    .menu-right { gap: 8px; }
+}

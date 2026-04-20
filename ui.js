@@ -2,10 +2,10 @@
 
 // ============ MENU SETUP ============
 function setupMenus() {
-    document.querySelectorAll('.menu-dropdown button').forEach(btn => {
+    document.querySelectorAll('.menu-dropdown button, .menu-right button').forEach(btn => {
         btn.addEventListener('click', () => {
             const action = btn.dataset.action;
-            executeAction(action);
+            if (action) executeAction(action);
             // Close menu
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('open'));
         });
@@ -23,14 +23,28 @@ function executeAction(action) {
         case 'export-jpeg': showExportJpegModal(); break;
         case 'undo': undo(); break;
         case 'redo': redo(); break;
-        case 'select-all': PF.selection = { type: 'rect', x: 0, y: 0, w: PF.width, h: PF.height }; renderOverlay(); break;
-        case 'deselect': PF.selection = null; renderOverlay(); break;
+        case 'select-all': PF.selection = { type: 'rect', x: 0, y: 0, w: PF.width, h: PF.height }; updateRectSelection({x: PF.width, y: PF.height}); break;
+        case 'deselect': PF.selection = null; clearSelectionCanvas(); renderOverlay(); break;
+        case 'select-invert': selectInvert(); break;
         case 'copy-selection': copySelection(); break;
         case 'paste-clipboard': pasteClipboard(); break;
         case 'cut-selection': cutSelection(); break;
-        case 'clear-canvas': getActiveLayer().clear(); renderAll(); saveHistory('Clear'); break;
+        case 'clear-canvas': 
+            if (PF.selection) {
+                const l = getActiveLayer();
+                l.ctx.save(); l.ctx.translate(-l.x, -l.y);
+                l.ctx.globalCompositeOperation = 'destination-out';
+                l.ctx.drawImage(PF.selectionCanvas, 0, 0);
+                l.ctx.restore();
+                renderAll(); saveHistory('Clear Selection');
+            } else {
+                getActiveLayer().clear(); renderAll(); saveHistory('Clear Layer');
+            }
+            break;
         case 'resize-canvas': showResizeModal('Canvas Size', false); break;
         case 'resize-image': showResizeModal('Image Size', true); break;
+        case 'layer-crop-to-canvas': cropLayerToCanvas(); break;
+        case 'layer-center': centerLayer(); break;
         case 'flip-h': flipLayer('h'); break;
         case 'flip-v': flipLayer('v'); break;
         case 'rotate-cw': rotateLayer(90); break;
@@ -47,7 +61,11 @@ function executeAction(action) {
         case 'filter-dropshadow': showFilterModal('Drop Shadow', filterDropShadow); break;
         case 'filter-outerglow': showFilterModal('Outer Glow', filterOuterGlow); break;
         case 'filter-chromakey': showFilterModal('Chroma Key', filterChromaKey); break;
+        case 'filter-replacebg': showReplaceBgModal(); break;
         case 'filter-smoothcolors': showFilterModal('Smooth Colors', filterSmoothColors); break;
+        case 'filter-posterize': showFilterModal('Posterize', filterPosterize); break;
+        case 'filter-pixelate': showFilterModal('Pixelate', filterPixelate); break;
+        case 'filter-edgedetect': filterEdgeDetect(); break;
         case 'zoom-in': PF.zoom = Math.min(32, PF.zoom * 1.25); updateTransform(); drawRulers(); break;
         case 'zoom-out': PF.zoom = Math.max(0.05, PF.zoom / 1.25); updateTransform(); drawRulers(); break;
         case 'zoom-fit': fitToScreen(); break;
@@ -385,11 +403,11 @@ function mergeDown() {
     if (PF.activeLayerIndex >= PF.layers.length - 1) return;
     const upper = PF.layers[PF.activeLayerIndex];
     const lower = PF.layers[PF.activeLayerIndex + 1];
+    lower.ctx.save();
     lower.ctx.globalAlpha = upper.opacity;
     lower.ctx.globalCompositeOperation = upper.blendMode;
-    lower.ctx.drawImage(upper.canvas, 0, 0);
-    lower.ctx.globalAlpha = 1;
-    lower.ctx.globalCompositeOperation = 'source-over';
+    lower.ctx.drawImage(upper.canvas, upper.x - lower.x, upper.y - lower.y);
+    lower.ctx.restore();
     PF.layers.splice(PF.activeLayerIndex, 1);
     renderAll(); updateLayerList(); saveHistory('Merge Down');
 }
@@ -491,7 +509,7 @@ function setupKeyboard() {
             document.getElementById('bg-color-swatch').style.background = PF.bgColor;
             updateColorPickerFromHex(PF.fgColor);
         }
-        if (e.key === 'Delete') { getActiveLayer().clear(); renderAll(); saveHistory('Clear Layer'); }
+        if (e.key === 'Delete') { executeAction('clear-canvas'); }
         if (e.key === '[') { PF.brushSize = Math.max(1, PF.brushSize - 2); document.getElementById('brush-size').value = PF.brushSize; document.getElementById('brush-size-val').textContent = PF.brushSize; }
         if (e.key === ']') { PF.brushSize = Math.min(200, PF.brushSize + 2); document.getElementById('brush-size').value = PF.brushSize; document.getElementById('brush-size-val').textContent = PF.brushSize; }
         if (e.key === 'Enter' && PF.tool === 'transform' && typeof commitTransform === 'function') { commitTransform(); }
@@ -504,17 +522,30 @@ function setupKeyboard() {
 
 // ============ CLIPBOARD ============
 function copySelection() {
-    const s = PF.selection;
-    if (!s || s.type !== 'rect') return;
+    if (!PF.selection) return;
     const layer = getActiveLayer();
-    PF.clipboard = layer.ctx.getImageData(s.x, s.y, s.w, s.h);
+    const tmp = document.createElement('canvas');
+    tmp.width = PF.width; tmp.height = PF.height;
+    const tctx = tmp.getContext('2d');
+    
+    tctx.drawImage(layer.canvas, layer.x, layer.y);
+    tctx.globalCompositeOperation = 'destination-in';
+    tctx.drawImage(PF.selectionCanvas, 0, 0);
+    
+    const bounds = getBoundsFromCanvas(tmp);
+    if (!bounds) { PF.clipboard = null; return; }
+    PF.clipboard = tctx.getImageData(bounds.x, bounds.y, bounds.w, bounds.h);
 }
 
 function cutSelection() {
     copySelection();
-    if (!PF.selection || PF.selection.type !== 'rect') return;
-    const s = PF.selection;
-    getActiveLayer().ctx.clearRect(s.x, s.y, s.w, s.h);
+    if (!PF.selection) return;
+    const layer = getActiveLayer();
+    layer.ctx.save();
+    layer.ctx.translate(-layer.x, -layer.y);
+    layer.ctx.globalCompositeOperation = 'destination-out';
+    layer.ctx.drawImage(PF.selectionCanvas, 0, 0);
+    layer.ctx.restore();
     renderAll(); saveHistory('Cut');
 }
 
@@ -587,10 +618,16 @@ function flipLayer(dir) {
     const tmp = document.createElement('canvas');
     tmp.width = PF.width; tmp.height = PF.height;
     const tctx = tmp.getContext('2d');
+    
     tctx.translate(dir === 'h' ? PF.width : 0, dir === 'v' ? PF.height : 0);
     tctx.scale(dir === 'h' ? -1 : 1, dir === 'v' ? -1 : 1);
-    tctx.drawImage(layer.canvas, 0, 0);
+    // Draw layer with its exact global position
+    tctx.drawImage(layer.canvas, layer.x, layer.y);
+    
     layer.clear();
+    layer.canvas.width = PF.width;
+    layer.canvas.height = PF.height;
+    layer.x = 0; layer.y = 0;
     layer.ctx.drawImage(tmp, 0, 0);
     renderAll(); saveHistory('Flip ' + (dir === 'h' ? 'Horizontal' : 'Vertical'));
 }
@@ -598,7 +635,7 @@ function flipLayer(dir) {
 function rotateLayer(deg) {
     const layer = getActiveLayer();
     const tmp = document.createElement('canvas');
-    if (Math.abs(deg) === 90) {
+    if (Math.abs(deg) === 90 || Math.abs(deg) === 270) {
         tmp.width = PF.height; tmp.height = PF.width;
     } else {
         tmp.width = PF.width; tmp.height = PF.height;
@@ -606,8 +643,9 @@ function rotateLayer(deg) {
     const tctx = tmp.getContext('2d');
     tctx.translate(tmp.width / 2, tmp.height / 2);
     tctx.rotate(deg * Math.PI / 180);
-    tctx.drawImage(layer.canvas, -PF.width / 2, -PF.height / 2);
-    // Resize all layers
+    tctx.drawImage(layer.canvas, -PF.width / 2 + layer.x, -PF.height / 2 + layer.y);
+    
+    // Resize all layers to match the new global bounds
     const newW = tmp.width, newH = tmp.height;
     PF.layers.forEach(l => {
         const ltmp = document.createElement('canvas');
@@ -615,10 +653,49 @@ function rotateLayer(deg) {
         const lctx = ltmp.getContext('2d');
         lctx.translate(newW / 2, newH / 2);
         lctx.rotate(deg * Math.PI / 180);
-        lctx.drawImage(l.canvas, -PF.width / 2, -PF.height / 2);
+        lctx.drawImage(l.canvas, -PF.width / 2 + l.x, -PF.height / 2 + l.y);
         l.canvas.width = newW; l.canvas.height = newH;
+        l.x = 0; l.y = 0;
         l.ctx.drawImage(ltmp, 0, 0);
     });
     setCanvasSize(newW, newH);
     fitToScreen(); renderAll(); saveHistory('Rotate ' + deg + '°');
+}
+
+// ============ UTILS ============
+function selectInvert() {
+    if (!PF.selection) {
+        PF.selection = { type: 'rect', x: 0, y: 0, w: PF.width, h: PF.height };
+        clearSelectionCanvas();
+        PF.sctx.fillStyle = '#fff';
+        PF.sctx.fillRect(0, 0, PF.width, PF.height);
+    } else {
+        PF.sctx.globalCompositeOperation = 'difference';
+        PF.sctx.fillStyle = '#fff';
+        PF.sctx.fillRect(0, 0, PF.width, PF.height);
+        PF.sctx.globalCompositeOperation = 'source-over';
+        PF.selection = { type: 'raster' };
+    }
+    renderOverlay();
+}
+
+function cropLayerToCanvas() {
+    const layer = getActiveLayer();
+    const tmp = document.createElement('canvas');
+    tmp.width = PF.width; tmp.height = PF.height;
+    tmp.getContext('2d').drawImage(layer.canvas, layer.x, layer.y);
+    layer.canvas.width = PF.width;
+    layer.canvas.height = PF.height;
+    layer.x = 0; layer.y = 0;
+    layer.ctx.drawImage(tmp, 0, 0);
+    renderAll();
+    saveHistory('Crop Layer');
+}
+
+function centerLayer() {
+    const layer = getActiveLayer();
+    layer.x = Math.round((PF.width - layer.canvas.width) / 2);
+    layer.y = Math.round((PF.height - layer.canvas.height) / 2);
+    renderAll();
+    saveHistory('Center Layer');
 }

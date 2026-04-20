@@ -49,7 +49,7 @@ function onMouseDown(e) {
         case 'magic-wand':
             magicWandSelect(Math.round(pos.x), Math.round(pos.y)); break;
         case 'move':
-            PF.moveStartData = { x: pos.x, y: pos.y }; break;
+            PF.moveStartData = { x: pos.x, y: pos.y, origX: getActiveLayer().x, origY: getActiveLayer().y }; break;
         case 'rect-shape': case 'ellipse-shape': case 'line-shape': case 'arrow-shape':
             PF.shapeStart = { x: pos.x, y: pos.y }; break;
         case 'gradient':
@@ -146,94 +146,135 @@ function onWheel(e) {
 
 // ============ BRUSH / PENCIL / ERASER ============
 let strokeCanvas = null, strokeCtx = null;
+let preStrokeBackup = null;
 
 function beginStroke(pos) {
     const layer = getActiveLayer();
+    // Save a backup of the layer before we start drawing
+    preStrokeBackup = document.createElement('canvas');
+    preStrokeBackup.width = layer.canvas.width;
+    preStrokeBackup.height = layer.canvas.height;
+    preStrokeBackup.getContext('2d').drawImage(layer.canvas, 0, 0);
+
+    // Create stroke buffer to accumulate all brush marks
     strokeCanvas = document.createElement('canvas');
-    strokeCanvas.width = PF.width; strokeCanvas.height = PF.height;
+    strokeCanvas.width = layer.canvas.width;
+    strokeCanvas.height = layer.canvas.height;
     strokeCtx = strokeCanvas.getContext('2d');
 
-    if (PF.tool === 'eraser') {
-        layer.ctx.globalCompositeOperation = 'destination-out';
-    }
     drawDot(pos);
 }
 
 function drawDot(pos) {
     const layer = getActiveLayer();
-    const ctx = layer.ctx;
     const size = PF.brushSize;
     const opacity = PF.brushOpacity / 100;
 
-    ctx.globalAlpha = opacity;
-    if (PF.tool === 'eraser') {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.globalAlpha = opacity;
-    } else {
-        ctx.globalCompositeOperation = 'source-over';
-    }
-    ctx.fillStyle = PF.fgColor;
-    ctx.strokeStyle = PF.fgColor;
-    ctx.lineWidth = size;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    // Draw onto the stroke buffer, not the layer
+    strokeCtx.fillStyle = PF.fgColor;
+    strokeCtx.strokeStyle = PF.fgColor;
+    strokeCtx.lineWidth = size;
+    strokeCtx.lineCap = 'round';
+    strokeCtx.lineJoin = 'round';
+    strokeCtx.globalAlpha = 1;
+
+    strokeCtx.save();
+    strokeCtx.translate(-layer.x, -layer.y);
 
     if (PF.tool === 'pencil') {
-        ctx.fillRect(Math.round(pos.x - size / 2), Math.round(pos.y - size / 2), size, size);
+        strokeCtx.fillRect(Math.round(pos.x - size / 2), Math.round(pos.y - size / 2), size, size);
     } else {
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, size / 2, 0, Math.PI * 2);
-        ctx.fill();
+        strokeCtx.beginPath();
+        strokeCtx.arc(pos.x, pos.y, size / 2, 0, Math.PI * 2);
+        strokeCtx.fill();
     }
-    renderAll();
+    strokeCtx.restore();
+
+    // Composite the stroke onto the layer for live preview
+    compositeStrokePreview();
 }
 
 function continueStroke(pos) {
     const layer = getActiveLayer();
-    const ctx = layer.ctx;
     const size = PF.brushSize;
-    const opacity = PF.brushOpacity / 100;
 
-    ctx.globalAlpha = opacity;
-    if (PF.tool === 'eraser') ctx.globalCompositeOperation = 'destination-out';
-    else ctx.globalCompositeOperation = 'source-over';
+    strokeCtx.fillStyle = PF.fgColor;
+    strokeCtx.strokeStyle = PF.fgColor;
+    strokeCtx.lineWidth = size;
+    strokeCtx.lineCap = 'round';
+    strokeCtx.lineJoin = 'round';
+    strokeCtx.globalAlpha = 1;
 
-    ctx.strokeStyle = PF.fgColor;
-    ctx.lineWidth = size;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    strokeCtx.save();
+    strokeCtx.translate(-layer.x, -layer.y);
 
     if (PF.tool === 'pencil') {
-        // Bresenham-style pixel line
         const dx = Math.abs(pos.x - PF.lastX), dy = Math.abs(pos.y - PF.lastY);
         const sx = PF.lastX < pos.x ? 1 : -1, sy = PF.lastY < pos.y ? 1 : -1;
         let err = dx - dy, cx = PF.lastX, cy = PF.lastY;
-        ctx.fillStyle = PF.fgColor;
         for (let i = 0; i < 1000; i++) {
-            ctx.fillRect(Math.round(cx - size / 2), Math.round(cy - size / 2), size, size);
+            strokeCtx.fillRect(Math.round(cx - size / 2), Math.round(cy - size / 2), size, size);
             if (Math.abs(cx - pos.x) < 1 && Math.abs(cy - pos.y) < 1) break;
             const e2 = err * 2;
             if (e2 > -dy) { err -= dy; cx += sx; }
             if (e2 < dx) { err += dx; cy += sy; }
         }
     } else {
-        ctx.beginPath();
-        ctx.moveTo(PF.lastX, PF.lastY);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
+        strokeCtx.beginPath();
+        strokeCtx.moveTo(PF.lastX, PF.lastY);
+        strokeCtx.lineTo(pos.x, pos.y);
+        strokeCtx.stroke();
     }
+    strokeCtx.restore();
+
+    compositeStrokePreview();
+}
+
+function compositeStrokePreview() {
+    const layer = getActiveLayer();
+    const ctx = layer.ctx;
+    const opacity = PF.brushOpacity / 100;
+
+    // Restore layer to pre-stroke state
+    ctx.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
+    ctx.drawImage(preStrokeBackup, 0, 0);
+
+    // Build a masked copy of the stroke buffer
+    const masked = document.createElement('canvas');
+    masked.width = layer.canvas.width;
+    masked.height = layer.canvas.height;
+    const mctx = masked.getContext('2d');
+    mctx.drawImage(strokeCanvas, 0, 0);
+
+    // Clip to selection mask if active
+    if (PF.selection) {
+        mctx.globalCompositeOperation = 'destination-in';
+        mctx.drawImage(PF.selectionCanvas, -layer.x, -layer.y);
+        mctx.globalCompositeOperation = 'source-over';
+    }
+
+    // Composite onto the layer
+    ctx.globalAlpha = opacity;
+    ctx.globalCompositeOperation = PF.tool === 'eraser' ? 'destination-out' : 'source-over';
+    ctx.drawImage(masked, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+
     renderAll();
 }
 
 function endStroke() {
-    const layer = getActiveLayer();
-    layer.ctx.globalAlpha = 1;
-    layer.ctx.globalCompositeOperation = 'source-over';
+    // The layer already has the final composited result from compositeStrokePreview
+    preStrokeBackup = null;
     strokeCanvas = null; strokeCtx = null;
     saveHistory(PF.tool === 'eraser' ? 'Erase' : PF.tool === 'pencil' ? 'Pencil' : 'Brush');
 }
 
 // ============ SELECTION TOOLS ============
+function clearSelectionCanvas() {
+    PF.sctx.clearRect(0, 0, PF.width, PF.height);
+}
+
 function startSelection(pos) {
     if (PF.tool === 'lasso') {
         PF.lassoPoints = [{ x: pos.x, y: pos.y }];
@@ -243,7 +284,17 @@ function startSelection(pos) {
 function updateRectSelection(pos) {
     const x = Math.min(PF.startX, pos.x), y = Math.min(PF.startY, pos.y);
     const w = Math.abs(pos.x - PF.startX), h = Math.abs(pos.y - PF.startY);
-    PF.selection = { type: PF.tool === 'rect-select' ? 'rect' : 'ellipse', x, y, w, h };
+    PF.selection = { type: 'raster' };
+    
+    clearSelectionCanvas();
+    PF.sctx.fillStyle = '#fff';
+    if (PF.tool === 'rect-select') {
+        PF.sctx.fillRect(x, y, w, h);
+    } else {
+        PF.sctx.beginPath();
+        PF.sctx.ellipse(x + w / 2, y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2);
+        PF.sctx.fill();
+    }
     renderOverlay();
 }
 
@@ -256,62 +307,113 @@ function continueLasso(pos) {
 
 function finishLasso() {
     if (PF.lassoPoints && PF.lassoPoints.length > 2) {
-        PF.selection = { type: 'lasso', points: PF.lassoPoints };
+        PF.selection = { type: 'raster' };
+        clearSelectionCanvas();
+        PF.sctx.fillStyle = '#fff';
+        PF.sctx.beginPath();
+        PF.lassoPoints.forEach((p, i) => i === 0 ? PF.sctx.moveTo(p.x, p.y) : PF.sctx.lineTo(p.x, p.y));
+        PF.sctx.fill();
     }
     PF.lassoPoints = null;
     renderOverlay();
 }
 
 function magicWandSelect(px, py) {
-    if (px < 0 || py < 0 || px >= PF.width || py >= PF.height) return;
     const layer = getActiveLayer();
-    const imgData = layer.ctx.getImageData(0, 0, PF.width, PF.height);
+    const lx = Math.round(px - layer.x);
+    const ly = Math.round(py - layer.y);
+    if (lx < 0 || ly < 0 || lx >= layer.canvas.width || ly >= layer.canvas.height) return;
+
+    const imgData = layer.ctx.getImageData(0, 0, layer.canvas.width, layer.canvas.height);
     const data = imgData.data;
-    const idx = (py * PF.width + px) * 4;
+    const idx = (ly * layer.canvas.width + lx) * 4;
     const tr = data[idx], tg = data[idx + 1], tb = data[idx + 2], ta = data[idx + 3];
     const tol = PF.wandTolerance;
-    const visited = new Uint8Array(PF.width * PF.height);
-    const stack = [px, py];
-    let minX = px, maxX = px, minY = py, maxY = py;
+    const visited = new Uint8Array(layer.canvas.width * layer.canvas.height);
+    const stack = [lx, ly];
+    
+    // Write directly to selection canvas
+    clearSelectionCanvas();
+    const selData = PF.sctx.getImageData(0, 0, PF.width, PF.height);
+    const sData = selData.data;
 
     while (stack.length > 0) {
         const cy = stack.pop(), cx = stack.pop();
-        if (cx < 0 || cy < 0 || cx >= PF.width || cy >= PF.height) continue;
-        const vi = cy * PF.width + cx;
+        if (cx < 0 || cy < 0 || cx >= layer.canvas.width || cy >= layer.canvas.height) continue;
+        const vi = cy * layer.canvas.width + cx;
         if (visited[vi]) continue;
         const ci = vi * 4;
         if (Math.abs(data[ci] - tr) > tol || Math.abs(data[ci + 1] - tg) > tol || Math.abs(data[ci + 2] - tb) > tol || Math.abs(data[ci + 3] - ta) > tol) continue;
         visited[vi] = 1;
-        if (cx < minX) minX = cx; if (cx > maxX) maxX = cx;
-        if (cy < minY) minY = cy; if (cy > maxY) maxY = cy;
+        
+        // Write to selection canvas which operates in global coordinates
+        const gx = cx + layer.x;
+        const gy = cy + layer.y;
+        if (gx >= 0 && gx < PF.width && gy >= 0 && gy < PF.height) {
+            const si = (gy * PF.width + gx) * 4;
+            sData[si] = 255; sData[si + 1] = 255; sData[si + 2] = 255; sData[si + 3] = 255;
+        }
+
         stack.push(cx + 1, cy, cx - 1, cy, cx, cy + 1, cx, cy - 1);
     }
-    PF.selection = { type: 'rect', x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
+    
+    PF.sctx.putImageData(selData, 0, 0);
+    PF.selection = { type: 'raster' };
     renderOverlay();
 }
 
 // ============ FLOOD FILL ============
 function floodFill(px, py) {
-    if (px < 0 || py < 0 || px >= PF.width || py >= PF.height) return;
     const layer = getActiveLayer();
-    const imgData = layer.ctx.getImageData(0, 0, PF.width, PF.height);
+    const lx = Math.round(px - layer.x);
+    const ly = Math.round(py - layer.y);
+    if (lx < 0 || ly < 0 || lx >= layer.canvas.width || ly >= layer.canvas.height) return;
+    
+    // Copy original in case of selection masking
+    const tmpCanvas = document.createElement('canvas');
+    tmpCanvas.width = layer.canvas.width; tmpCanvas.height = layer.canvas.height;
+    const tctx = tmpCanvas.getContext('2d');
+    tctx.drawImage(layer.canvas, 0, 0);
+
+    const imgData = tctx.getImageData(0, 0, layer.canvas.width, layer.canvas.height);
     const data = imgData.data;
-    const idx = (py * PF.width + px) * 4;
+    const idx = (ly * layer.canvas.width + lx) * 4;
     const tr = data[idx], tg = data[idx + 1], tb = data[idx + 2], ta = data[idx + 3];
     const fc = hexToRgb(PF.fgColor);
     if (tr === fc.r && tg === fc.g && tb === fc.b && ta === 255) return;
     const tol = PF.fillTolerance;
-    const stack = [px, py];
+    const stack = [lx, ly];
 
     while (stack.length > 0) {
         const cy = stack.pop(), cx = stack.pop();
-        if (cx < 0 || cy < 0 || cx >= PF.width || cy >= PF.height) continue;
-        const ci = (cy * PF.width + cx) * 4;
+        if (cx < 0 || cy < 0 || cx >= layer.canvas.width || cy >= layer.canvas.height) continue;
+        const ci = (cy * layer.canvas.width + cx) * 4;
         if (Math.abs(data[ci] - tr) > tol || Math.abs(data[ci + 1] - tg) > tol || Math.abs(data[ci + 2] - tb) > tol || Math.abs(data[ci + 3] - ta) > tol) continue;
         data[ci] = fc.r; data[ci + 1] = fc.g; data[ci + 2] = fc.b; data[ci + 3] = 255;
         stack.push(cx + 1, cy, cx - 1, cy, cx, cy + 1, cx, cy - 1);
     }
-    layer.ctx.putImageData(imgData, 0, 0);
+    tctx.putImageData(imgData, 0, 0);
+    
+    layer.clear();
+    layer.ctx.drawImage(tmpCanvas, 0, 0);
+    
+    // Apply selection mask
+    if (PF.selection) {
+        // Redraw the original unmodified layer first
+        layer.clear();
+        layer.ctx.drawImage(PF.history[PF.historyIndex].layers[PF.activeLayerIndex].canvas, 0, 0);
+        
+        // Draw the filled portion restricted by the mask
+        const maskedCanvas = document.createElement('canvas');
+        maskedCanvas.width = layer.canvas.width; maskedCanvas.height = layer.canvas.height;
+        const mctx = maskedCanvas.getContext('2d');
+        mctx.drawImage(tmpCanvas, 0, 0);
+        mctx.globalCompositeOperation = 'destination-in';
+        mctx.drawImage(PF.selectionCanvas, -layer.x, -layer.y);
+        
+        layer.ctx.drawImage(maskedCanvas, 0, 0);
+    }
+
     renderAll();
     saveHistory('Fill');
 }
@@ -330,13 +432,10 @@ function pickColor(pos) {
 function moveLayer(pos) {
     if (!PF.moveStartData) return;
     const layer = getActiveLayer();
-    const dx = pos.x - PF.moveStartData.x, dy = pos.y - PF.moveStartData.y;
-    const tmp = document.createElement('canvas');
-    tmp.width = PF.width; tmp.height = PF.height;
-    tmp.getContext('2d').drawImage(layer.canvas, 0, 0);
-    layer.clear();
-    layer.ctx.drawImage(tmp, dx, dy);
-    PF.moveStartData = { x: pos.x, y: pos.y };
+    const dx = pos.x - PF.moveStartData.x;
+    const dy = pos.y - PF.moveStartData.y;
+    layer.x = PF.moveStartData.origX + dx;
+    layer.y = PF.moveStartData.origY + dy;
     renderAll();
 }
 
@@ -384,6 +483,10 @@ function commitShape(pos) {
     const layer = getActiveLayer();
     const s = PF.shapeStart;
     if (!s) return;
+    
+    // Draw onto layer
+    layer.ctx.save();
+    layer.ctx.translate(-layer.x, -layer.y);
     layer.ctx.strokeStyle = PF.fgColor;
     layer.ctx.fillStyle = PF.fgColor;
     layer.ctx.lineWidth = PF.shapeStrokeWidth;
@@ -405,6 +508,17 @@ function commitShape(pos) {
         layer.ctx.stroke();
         if (PF.tool === 'arrow-shape') drawArrowHead(layer.ctx, s.x, s.y, pos.x, pos.y, 15);
     }
+    
+    // Masking
+    if (PF.selection) {
+        layer.ctx.globalCompositeOperation = 'destination-in';
+        layer.ctx.globalAlpha = 1;
+        layer.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        layer.ctx.drawImage(PF.selectionCanvas, -layer.x, -layer.y);
+    }
+    
+    layer.ctx.restore();
+
     PF.shapeStart = null;
     renderAll();
     saveHistory('Shape');
@@ -435,7 +549,18 @@ function drawGradientTo(ctx, from, to, alpha) {
 function commitGradient(pos) {
     if (!PF.gradientStart) return;
     const layer = getActiveLayer();
+    layer.ctx.save();
+    layer.ctx.translate(-layer.x, -layer.y);
     drawGradientTo(layer.ctx, PF.gradientStart, pos, PF.brushOpacity / 100);
+    
+    if (PF.selection) {
+        layer.ctx.globalCompositeOperation = 'destination-in';
+        layer.ctx.globalAlpha = 1;
+        layer.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        layer.ctx.drawImage(PF.selectionCanvas, -layer.x, -layer.y);
+    }
+    layer.ctx.restore();
+
     PF.gradientStart = null;
     renderAll();
     saveHistory('Gradient');
@@ -520,6 +645,9 @@ function commitText(overlay) {
         const y = pos.y + PF.textSize + i * lineHeight;
         ctx.font = `${PF.textItalic ? 'italic ' : ''}${PF.textWeight} ${PF.textSize}px "${PF.textFont}"`;
         ctx.textBaseline = 'alphabetic';
+        
+        ctx.save();
+        ctx.translate(-layer.x, -layer.y);
 
         // Glow
         if (PF.textGlow) {
@@ -556,7 +684,18 @@ function commitText(overlay) {
         ctx.shadowBlur = 0;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
+        
+        ctx.restore();
     });
+    
+    // Selection masking
+    if (PF.selection) {
+        ctx.globalCompositeOperation = 'destination-in';
+        ctx.globalAlpha = 1;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.drawImage(PF.selectionCanvas, -layer.x, -layer.y);
+        ctx.globalCompositeOperation = 'source-over';
+    }
 
     renderAll();
     saveHistory('Text');
@@ -576,7 +715,7 @@ function activateTransform() {
     const origCanvas = document.createElement('canvas');
     origCanvas.width = bounds.w;
     origCanvas.height = bounds.h;
-    origCanvas.getContext('2d').drawImage(layer.canvas, bounds.x, bounds.y, bounds.w, bounds.h, 0, 0, bounds.w, bounds.h);
+    origCanvas.getContext('2d').drawImage(layer.canvas, bounds.x - layer.x, bounds.y - layer.y, bounds.w, bounds.h, 0, 0, bounds.w, bounds.h);
     tfState = {
         bounds: { ...bounds },
         startBounds: { ...bounds },
@@ -590,12 +729,31 @@ function activateTransform() {
 }
 
 function getContentBounds(layer) {
-    const imgData = layer.ctx.getImageData(0, 0, PF.width, PF.height);
+    const imgData = layer.ctx.getImageData(0, 0, layer.canvas.width, layer.canvas.height);
     const d = imgData.data;
-    let minX = PF.width, minY = PF.height, maxX = 0, maxY = 0;
-    for (let y = 0; y < PF.height; y++) {
-        for (let x = 0; x < PF.width; x++) {
-            if (d[(y * PF.width + x) * 4 + 3] > 0) {
+    let minX = layer.canvas.width, minY = layer.canvas.height, maxX = 0, maxY = 0;
+    for (let y = 0; y < layer.canvas.height; y++) {
+        for (let x = 0; x < layer.canvas.width; x++) {
+            if (d[(y * layer.canvas.width + x) * 4 + 3] > 0) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+            }
+        }
+    }
+    if (maxX < minX) return null;
+    return { x: minX + layer.x, y: minY + layer.y, w: maxX - minX + 1, h: maxY - minY + 1 };
+}
+
+function getBoundsFromCanvas(canvas) {
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = imgData.data;
+    let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+    for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++) {
+            if (d[(y * canvas.width + x) * 4 + 3] > 0) {
                 if (x < minX) minX = x;
                 if (x > maxX) maxX = x;
                 if (y < minY) minY = y;
@@ -717,7 +875,7 @@ function transformMouseMove(pos) {
     // Live preview: redraw the layer with the transformed content
     const layer = getActiveLayer();
     layer.clear();
-    layer.ctx.drawImage(tfState.origCanvas, 0, 0, tfState.origCanvas.width, tfState.origCanvas.height, b.x, b.y, b.w, b.h);
+    layer.ctx.drawImage(tfState.origCanvas, 0, 0, tfState.origCanvas.width, tfState.origCanvas.height, b.x - layer.x, b.y - layer.y, b.w, b.h);
     renderAll();
     drawTransformOverlay();
 }
@@ -743,7 +901,7 @@ function cancelTransform() {
     const layer = getActiveLayer();
     layer.clear();
     const ob = tfState.startBounds;
-    layer.ctx.drawImage(tfState.origCanvas, ob.x, ob.y);
+    layer.ctx.drawImage(tfState.origCanvas, ob.x - layer.x, ob.y - layer.y);
     PF.octx.clearRect(0, 0, PF.width, PF.height);
     tfState = null;
     renderAll();
