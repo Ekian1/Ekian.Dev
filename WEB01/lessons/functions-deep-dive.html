@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 8: Functions Deep Dive — ekian.dev</title>
+    <meta name="description" content="Learn how to write reusable code using Functions, parameters, and return values.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../lesson.css">
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="../index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="../index.html#lessons" class="nav-link">Lessons</a>
+                <a href="../pro.html" class="nav-link">Pro Access</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../index.html#lessons" class="btn btn-secondary">All Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <article class="lesson-page" id="lesson-content">
+        <div class="lesson-hero-bar">
+            <div class="container">
+                <div class="lesson-breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <a href="../index.html#lessons">Lessons</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>Lesson 8</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-container">
+            <div class="lesson-body">
+                <div class="lesson-header-info">
+                    <span class="lesson-level level-intermediate">Intermediate</span>
+                    <span class="lesson-est">Free</span>
+                </div>
+
+                <h1 id="lesson-page-title">Functions</h1>
+                <p class="lesson-lead">If you find yourself copying and pasting the exact same code in multiple places, you are doing it wrong. Use Functions to write reusable blocks of code.</p>
+                <hr class="lesson-divider">
+                
+                <h2 id="section-1">Defining a Function</h2>
+                <p>A function is like a recipe. You write the recipe once, and then you can "call" it as many times as you want to bake the cake.</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Basic Function</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> <span class="code-keyword">function</span> <span class="code-func">WelcomePlayer</span>()
+    <span class="code-func">print</span>(<span class="code-string">"Welcome to the game!"</span>)
+<span class="code-keyword">end</span>
+
+<span class="code-comment">-- To run the code, you must "call" the function:</span>
+WelcomePlayer()</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-2">Parameters & Arguments</h2>
+                <p>Functions become powerful when you give them data to work with. These pieces of data are called <strong>Parameters</strong>.</p>
+                <p>When writing modern Luau, you should use Strict Typing (<code>name: string</code>) to tell the script exactly what kind of data the parameter should be. This gives you amazing autocomplete features in Studio.</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Typed Parameters</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> <span class="code-keyword">function</span> <span class="code-func">DamagePlayer</span>(playerName: <span class="code-type">string</span>, amount: <span class="code-type">number</span>)
+    <span class="code-func">print</span>(playerName .. <span class="code-string">" took "</span> .. amount .. <span class="code-string">" damage!"</span>)
+<span class="code-keyword">end</span>
+
+<span class="code-comment">-- Calling with arguments</span>
+DamagePlayer(<span class="code-string">"ekian"</span>, <span class="code-keyword">25</span>)</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-3">Return Values</h2>
+                <p>Functions don't just execute code; they can also calculate a result and <strong>return</strong> it back to wherever the function was called.</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Returning Data</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> <span class="code-keyword">function</span> <span class="code-func">AddNumbers</span>(a: <span class="code-type">number</span>, b: <span class="code-type">number</span>): <span class="code-type">number</span>
+    <span class="code-keyword">return</span> a + b
+<span class="code-keyword">end</span>
+
+<span class="code-keyword">local</span> result = AddNumbers(<span class="code-keyword">10</span>, <span class="code-keyword">5</span>)
+<span class="code-func">print</span>(result) <span class="code-comment">-- Prints 15</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="lesson-nav-footer">
+                    <a href="control-flow.html" class="lesson-nav-prev">
+                        <span class="nav-dir">Previous Lesson</span>
+                        <span class="nav-lesson-name">7. Control Flow</span>
+                    </a>
+                    <a href="tables-arrays.html" class="lesson-nav-next">
+                        <span class="nav-dir">Next Lesson</span>
+                        <span class="nav-lesson-name">9. Tables & Arrays</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lesson-sidebar" id="lesson-sidebar">
+                <div class="sidebar-toc">
+                    <h4 class="sidebar-heading">On This Page</h4>
+                    <a href="#section-1" class="toc-link">Defining a Function</a>
+                    <a href="#section-2" class="toc-link">Parameters & Arguments</a>
+                    <a href="#section-3" class="toc-link">Return Values</a>
+                </div>
+                <div class="sidebar-cta">
+                    <h4 class="sidebar-heading">Unlock All Lessons</h4>
+                    <p>Get access to advanced Pro lessons, project files, and priority support.</p>
+                    <a href="../pro.html" class="btn btn-primary btn-full">Join Patreon</a>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <footer id="main-footer" class="footer" style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 ekian.dev</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

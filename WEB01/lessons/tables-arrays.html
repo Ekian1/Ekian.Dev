@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 9: Tables & Arrays — ekian.dev</title>
+    <meta name="description" content="Master Luau Tables to store multiple values, create dictionaries, and loop through data.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../lesson.css">
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="../index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="../index.html#lessons" class="nav-link">Lessons</a>
+                <a href="../pro.html" class="nav-link">Pro Access</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../index.html#lessons" class="btn btn-secondary">All Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <article class="lesson-page" id="lesson-content">
+        <div class="lesson-hero-bar">
+            <div class="container">
+                <div class="lesson-breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <a href="../index.html#lessons">Lessons</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>Lesson 9</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-container">
+            <div class="lesson-body">
+                <div class="lesson-header-info">
+                    <span class="lesson-level level-intermediate">Intermediate</span>
+                    <span class="lesson-est">Free</span>
+                </div>
+
+                <h1 id="lesson-page-title">Tables & Arrays</h1>
+                <p class="lesson-lead">In Luau, the Table is the only data structure. It is incredibly powerful and can act as an Array, a Dictionary, or an Object.</p>
+                <hr class="lesson-divider">
+                
+                <h2 id="section-1">Arrays (Lists)</h2>
+                <p>An array is an ordered list of items. You create a table using curly brackets <code>{}</code>. In Luau, arrays start at index <strong>1</strong> (unlike other languages that start at 0).</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Working with Arrays</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> weapons = {<span class="code-string">"Sword"</span>, <span class="code-string">"Bow"</span>, <span class="code-string">"Staff"</span>}
+
+<span class="code-func">print</span>(weapons[<span class="code-keyword">1</span>]) <span class="code-comment">-- Prints "Sword"</span>
+
+<span class="code-comment">-- Adding a new item to the end of the array</span>
+<span class="code-func">table.insert</span>(weapons, <span class="code-string">"Dagger"</span>)
+
+<span class="code-comment">-- Removing the item at index 2 ("Bow")</span>
+<span class="code-func">table.remove</span>(weapons, <span class="code-keyword">2</span>)</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-2">Dictionaries (Key-Value)</h2>
+                <p>If you don't want a numbered list, you can use strings as the "index". This turns the table into a Dictionary, where every piece of data has a specific name (Key).</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Player Data Dictionary</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> playerData = {
+    Name = <span class="code-string">"ekian"</span>,
+    Level = <span class="code-keyword">50</span>,
+    IsAdmin = <span class="code-keyword">true</span>
+}
+
+<span class="code-func">print</span>(playerData.Name) <span class="code-comment">-- Prints "ekian"</span>
+
+<span class="code-comment">-- Updating a value</span>
+playerData.Level += <span class="code-keyword">1</span></code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-3">Looping through Tables</h2>
+                <p>To run code for every single item inside a table, we use a <code>for</code> loop. There are two standard ways to do this in Luau.</p>
+                <ul class="lesson-steps">
+                    <li><strong>ipairs:</strong> Used for <strong>Arrays</strong>. It loops in exact numerical order (1, 2, 3...) and stops if it hits a gap.</li>
+                    <li><strong>pairs:</strong> Used for <strong>Dictionaries</strong>. It loops through string keys, but the order is not guaranteed.</li>
+                </ul>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Iterating with ipairs</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> players = {<span class="code-string">"ekian"</span>, <span class="code-string">"builderman"</span>, <span class="code-string">"shedletsky"</span>}
+
+<span class="code-keyword">for</span> index, name <span class="code-keyword">in</span> <span class="code-func">ipairs</span>(players) <span class="code-keyword">do</span>
+    <span class="code-func">print</span>(<span class="code-string">"Player #"</span> .. index .. <span class="code-string">" is "</span> .. name)
+<span class="code-keyword">end</span></code></pre>
+                    </div>
+                </div>
+
+                <div class="lesson-nav-footer">
+                    <a href="functions-deep-dive.html" class="lesson-nav-prev">
+                        <span class="nav-dir">Previous Lesson</span>
+                        <span class="nav-lesson-name">8. Functions</span>
+                    </a>
+                    <a href="client-server.html" class="lesson-nav-next">
+                        <span class="nav-dir">Next Lesson</span>
+                        <span class="nav-lesson-name">10. Client vs Server</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lesson-sidebar" id="lesson-sidebar">
+                <div class="sidebar-toc">
+                    <h4 class="sidebar-heading">On This Page</h4>
+                    <a href="#section-1" class="toc-link">Arrays (Lists)</a>
+                    <a href="#section-2" class="toc-link">Dictionaries</a>
+                    <a href="#section-3" class="toc-link">Looping through Tables</a>
+                </div>
+                <div class="sidebar-cta">
+                    <h4 class="sidebar-heading">Unlock All Lessons</h4>
+                    <p>Get access to advanced Pro lessons, project files, and priority support.</p>
+                    <a href="../pro.html" class="btn btn-primary btn-full">Join Patreon</a>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <footer id="main-footer" class="footer" style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 ekian.dev</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

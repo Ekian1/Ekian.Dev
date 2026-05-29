@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 3: Explorer & Properties — ekian.dev</title>
+    <meta name="description" content="Master the Explorer window and Properties panel to modify your game world.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../lesson.css">
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="../index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="../index.html#lessons" class="nav-link">Lessons</a>
+                <a href="../pro.html" class="nav-link">Pro Access</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../index.html#lessons" class="btn btn-secondary">All Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <article class="lesson-page" id="lesson-content">
+        <div class="lesson-hero-bar">
+            <div class="container">
+                <div class="lesson-breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <a href="../index.html#lessons">Lessons</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>Lesson 3</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-container">
+            <div class="lesson-body">
+                <div class="lesson-header-info">
+                    <span class="lesson-level level-beginner">Beginner</span>
+                    <span class="lesson-est">Free</span>
+                </div>
+
+                <h1 id="lesson-page-title">Explorer & Properties</h1>
+                <p class="lesson-lead">The Explorer is the heart of your game. Understanding the Parent-Child hierarchy is crucial for scripting.</p>
+                <hr class="lesson-divider">
+                
+                <h2 id="section-1">The Explorer Hierarchy</h2>
+                <p>The Explorer window lists every object in your game. These objects are organized in a <strong>Tree</strong> structure known as the Parent-Child hierarchy.</p>
+                <p>If you put a <code>Script</code> inside a <code>Part</code>, the <code>Part</code> is the <strong>Parent</strong>, and the <code>Script</code> is the <strong>Child</strong>. You can drag and drop items in the Explorer to change their parent.</p>
+
+                <h2 id="section-2">Key Folders in Explorer</h2>
+                <ul class="lesson-steps">
+                    <li><strong>Workspace:</strong> The physical 3D world. If it exists in the 3D view, it is a child of Workspace.</li>
+                    <li><strong>ServerScriptService:</strong> Where you place Scripts that run on the Server. Players cannot see or steal code placed here.</li>
+                    <li><strong>ReplicatedStorage:</strong> A shared folder. Both the Server and the Players can see what is inside here (perfect for Models, Tools, and Events).</li>
+                    <li><strong>StarterGui:</strong> Where you place 2D UI elements (like health bars or buttons) that appear on the player's screen.</li>
+                </ul>
+
+                <h2 id="section-3">The Properties Window</h2>
+                <p>When you click on any object in the Explorer, its <strong>Properties</strong> appear in the Properties window. Properties define exactly how the object behaves and looks.</p>
+                <p>Important Part Properties to know:</p>
+                <ul class="lesson-steps">
+                    <li><strong>Transparency:</strong> Ranges from 0 (solid) to 1 (invisible). Setting it to 1 is how you create invisible walls!</li>
+                    <li><strong>CanCollide:</strong> A checkbox. If checked, players will bump into the part. If unchecked, players will walk right through it like a ghost.</li>
+                    <li><strong>Material:</strong> Changes the texture of the part (e.g., Neon makes it glow, Wood gives it a wood grain).</li>
+                </ul>
+
+                <div class="lesson-nav-footer">
+                    <a href="parts-and-models.html" class="lesson-nav-prev">
+                        <span class="nav-dir">Previous Lesson</span>
+                        <span class="nav-lesson-name">2. Parts & Models</span>
+                    </a>
+                    <a href="building-first-game.html" class="lesson-nav-next">
+                        <span class="nav-dir">Next Lesson</span>
+                        <span class="nav-lesson-name">4. Building a Game</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lesson-sidebar" id="lesson-sidebar">
+                <div class="sidebar-toc">
+                    <h4 class="sidebar-heading">On This Page</h4>
+                    <a href="#section-1" class="toc-link">The Explorer Hierarchy</a>
+                    <a href="#section-2" class="toc-link">Key Folders</a>
+                    <a href="#section-3" class="toc-link">The Properties Window</a>
+                </div>
+                <div class="sidebar-cta">
+                    <h4 class="sidebar-heading">Unlock All Lessons</h4>
+                    <p>Get access to advanced Pro lessons, project files, and priority support.</p>
+                    <a href="../pro.html" class="btn btn-primary btn-full">Join Patreon</a>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <footer id="main-footer" class="footer" style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 ekian.dev</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

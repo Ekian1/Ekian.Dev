@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 6: Events & Connections — ekian.dev</title>
+    <meta name="description" content="Learn how to make your game react to player actions using Events and Connections.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../lesson.css">
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="../index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="../index.html#lessons" class="nav-link">Lessons</a>
+                <a href="../pro.html" class="nav-link">Pro Access</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../index.html#lessons" class="btn btn-secondary">All Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <article class="lesson-page" id="lesson-content">
+        <div class="lesson-hero-bar">
+            <div class="container">
+                <div class="lesson-breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <a href="../index.html#lessons">Lessons</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>Lesson 6</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-container">
+            <div class="lesson-body">
+                <div class="lesson-header-info">
+                    <span class="lesson-level level-intermediate">Intermediate</span>
+                    <span class="lesson-est">Free</span>
+                </div>
+
+                <h1 id="lesson-page-title">Events & Connections</h1>
+                <p class="lesson-lead">Code that just runs once isn't very useful for a game. We need code that reacts to players touching things, clicking buttons, or joining the game.</p>
+                <hr class="lesson-divider">
+                
+                <h2 id="section-1">What is an Event?</h2>
+                <p>An Event is a signal that Roblox fires when something specific happens. For example, when a Part touches another Part, it fires the <code>.Touched</code> event. When a player joins the server, the <code>PlayerAdded</code> event fires.</p>
+
+                <h2 id="section-2">Connecting Functions to Events</h2>
+                <p>To make your code run when an event fires, you use the <code>:Connect()</code> method. You pass a function inside the connect parentheses.</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">A Basic Kill Brick</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> lavaPart = workspace.LavaPart
+
+<span class="code-comment">-- The parameter 'hit' represents whatever part touched the lava</span>
+lavaPart.Touched:Connect(<span class="code-keyword">function</span>(hit)
+    <span class="code-comment">-- Check if the part that touched us belongs to a Player Character</span>
+    <span class="code-keyword">local</span> character = hit.Parent
+    <span class="code-keyword">local</span> humanoid = character:FindFirstChild(<span class="code-string">"Humanoid"</span>)
+    
+    <span class="code-keyword">if</span> humanoid <span class="code-keyword">then</span>
+        humanoid.Health = <span class="code-keyword">0</span>
+    <span class="code-keyword">end</span>
+<span class="code-keyword">end</span>)</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-3">Disconnecting Events</h2>
+                <p>When you use <code>:Connect()</code>, Roblox creates a Connection object in memory. If the part is destroyed, Roblox handles the cleanup. But if the part stays in the game forever and you keep connecting new functions to it, you will create a <strong>Memory Leak</strong>.</p>
+                <p>You can manually stop listening to an event by saving the connection to a variable and calling <code>:Disconnect()</code>.</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Disconnect Example</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> connection
+
+connection = part.Touched:Connect(<span class="code-keyword">function</span>(hit)
+    <span class="code-func">print</span>(<span class="code-string">"Touched!"</span>)
+    
+    <span class="code-comment">-- Disconnect immediately so it only fires ONCE</span>
+    connection:Disconnect()
+<span class="code-keyword">end</span>)</code></pre>
+                    </div>
+                </div>
+
+                <div class="lesson-nav-footer">
+                    <a href="your-first-script.html" class="lesson-nav-prev">
+                        <span class="nav-dir">Previous Lesson</span>
+                        <span class="nav-lesson-name">5. Your First Script</span>
+                    </a>
+                    <a href="control-flow.html" class="lesson-nav-next">
+                        <span class="nav-dir">Next Lesson</span>
+                        <span class="nav-lesson-name">7. Control Flow (If/Else)</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lesson-sidebar" id="lesson-sidebar">
+                <div class="sidebar-toc">
+                    <h4 class="sidebar-heading">On This Page</h4>
+                    <a href="#section-1" class="toc-link">What is an Event?</a>
+                    <a href="#section-2" class="toc-link">Connecting Functions</a>
+                    <a href="#section-3" class="toc-link">Disconnecting Events</a>
+                </div>
+                <div class="sidebar-cta">
+                    <h4 class="sidebar-heading">Unlock All Lessons</h4>
+                    <p>Get access to advanced Pro lessons, project files, and priority support.</p>
+                    <a href="../pro.html" class="btn btn-primary btn-full">Join Patreon</a>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <footer id="main-footer" class="footer" style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 ekian.dev</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

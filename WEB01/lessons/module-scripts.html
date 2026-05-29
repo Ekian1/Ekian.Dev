@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 12: ModuleScripts — ekian.dev</title>
+    <meta name="description" content="Organize your codebase and write reusable functions using ModuleScripts.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../lesson.css">
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="../index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="../index.html#lessons" class="nav-link">Lessons</a>
+                <a href="../pro.html" class="nav-link">Pro Access</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../index.html#lessons" class="btn btn-secondary">All Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <article class="lesson-page" id="lesson-content">
+        <div class="lesson-hero-bar">
+            <div class="container">
+                <div class="lesson-breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <a href="../index.html#lessons">Lessons</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>Lesson 12</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-container">
+            <div class="lesson-body">
+                <div class="lesson-header-info">
+                    <span class="lesson-level level-intermediate">Intermediate</span>
+                    <span class="lesson-est">Free</span>
+                </div>
+
+                <h1 id="lesson-page-title">ModuleScripts</h1>
+                <p class="lesson-lead">If you have 10 scripts that all need to calculate a player's level, you shouldn't copy and paste the math 10 times. Enter ModuleScripts.</p>
+                <hr class="lesson-divider">
+                
+                <h2 id="section-1">What is a ModuleScript?</h2>
+                <p>A ModuleScript is a script that does not run automatically. Instead, it holds a table of functions and data that other scripts can "require" and use. This prevents duplicate code and keeps your project clean.</p>
+
+                <h2 id="section-2">Creating a Module</h2>
+                <p>When you create a new ModuleScript, Roblox automatically generates a basic table setup. We simply attach functions to that table.</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">MathHelper Module</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> MathHelper = {}
+
+<span class="code-comment">-- Attach a function to the module</span>
+<span class="code-keyword">function</span> <span class="code-func">MathHelper.CalculateLevel</span>(xp: <span class="code-type">number</span>)
+    <span class="code-keyword">return</span> <span class="code-func">math.floor</span>(xp / <span class="code-keyword">100</span>) + <span class="code-keyword">1</span>
+<span class="code-keyword">end</span>
+
+<span class="code-comment">-- You must ALWAYS return the table at the end!</span>
+<span class="code-keyword">return</span> MathHelper</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-3">Requiring a Module</h2>
+                <p>To use the module inside a standard Script or LocalScript, you use the built-in <code>require()</code> function.</p>
+                
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Server Script</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-comment">-- Load the module into memory</span>
+<span class="code-keyword">local</span> MathHelper = <span class="code-func">require</span>(game.ReplicatedStorage.MathHelper)
+
+<span class="code-comment">-- Use its functions!</span>
+<span class="code-keyword">local</span> playerXP = <span class="code-keyword">450</span>
+<span class="code-keyword">local</span> currentLevel = MathHelper.CalculateLevel(playerXP)
+
+<span class="code-func">print</span>(<span class="code-string">"Player is level: "</span> .. currentLevel) <span class="code-comment">-- Prints 5</span></code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-4">Shared State</h2>
+                <p>ModuleScripts also remember data. If Script A requires a module and changes a variable inside it, and then Script B requires the module, Script B will see the updated variable. This makes them perfect for storing game configuration data or active match states!</p>
+
+                <div class="lesson-nav-footer">
+                    <a href="remote-events.html" class="lesson-nav-prev">
+                        <span class="nav-dir">Previous Lesson</span>
+                        <span class="nav-lesson-name">11. RemoteEvents</span>
+                    </a>
+                    <a href="../pro.html" class="lesson-nav-next">
+                        <span class="nav-dir">Go Pro</span>
+                        <span class="nav-lesson-name">13. OOP in Luau (Pro)</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lesson-sidebar" id="lesson-sidebar">
+                <div class="sidebar-toc">
+                    <h4 class="sidebar-heading">On This Page</h4>
+                    <a href="#section-1" class="toc-link">What is a ModuleScript?</a>
+                    <a href="#section-2" class="toc-link">Creating a Module</a>
+                    <a href="#section-3" class="toc-link">Requiring a Module</a>
+                    <a href="#section-4" class="toc-link">Shared State</a>
+                </div>
+                <div class="sidebar-cta">
+                    <h4 class="sidebar-heading">Unlock All Lessons</h4>
+                    <p>Get access to advanced Pro lessons, project files, and priority support.</p>
+                    <a href="../pro.html" class="btn btn-primary btn-full">Join Patreon</a>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <footer id="main-footer" class="footer" style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 ekian.dev</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
