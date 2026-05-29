@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 5: Your First Script — ekian.dev</title>
+    <meta name="description" content="Write your first Luau script, learn about variables, and use the Output window.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../lesson.css">
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="../index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="../index.html#lessons" class="nav-link">Lessons</a>
+                <a href="../pro.html" class="nav-link">Pro Access</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../index.html#lessons" class="btn btn-secondary">All Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <article class="lesson-page" id="lesson-content">
+        <div class="lesson-hero-bar">
+            <div class="container">
+                <div class="lesson-breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <a href="../index.html#lessons">Lessons</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>Lesson 5</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-container">
+            <div class="lesson-body">
+                <div class="lesson-header-info">
+                    <span class="lesson-level level-intermediate">Intermediate</span>
+                    <span class="lesson-est">Free</span>
+                </div>
+
+                <h1 id="lesson-page-title">Your First Script</h1>
+                <p class="lesson-lead">Roblox uses a programming language called Luau. Let's write your first script and learn the syntax.</p>
+                <hr class="lesson-divider">
+                
+                <h2 id="section-1">Creating a Script</h2>
+                <p>In the Explorer window, hover over <strong>ServerScriptService</strong> and click the <code>+</code> icon. Select <strong>Script</strong>. This creates a new Server Script. Double-click it to open the code editor.</p>
+
+                <h2 id="section-2">The Print Function</h2>
+                <p>By default, the script contains <code>print("Hello world!")</code>. The <code>print()</code> function sends a message to the Output window. This is your most powerful tool for debugging.</p>
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">ServerScriptService/Script</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-func">print</span>(<span class="code-string">"The script has started running!"</span>)</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-3">Variables</h2>
+                <p>Variables store data so you can use it later. In modern Luau, you should always declare variables using the <code>local</code> keyword. This ensures the variable is only accessible within the current scope, saving memory and preventing bugs.</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Data Types</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> playerName = <span class="code-string">"ekian"</span> <span class="code-comment">-- String (text)</span>
+<span class="code-keyword">local</span> playerHealth = <span class="code-keyword">100</span>     <span class="code-comment">-- Number</span>
+<span class="code-keyword">local</span> isAlive = <span class="code-keyword">true</span>         <span class="code-comment">-- Boolean (true/false)</span>
+
+<span class="code-func">print</span>(playerName .. <span class="code-string">" has "</span> .. playerHealth .. <span class="code-string">" health."</span>)</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-4">Modifying Properties with Code</h2>
+                <p>You can change the properties of Parts via code. First, you must find the Part in the Explorer using dots (<code>.</code>).</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">Modifying a Part</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-comment">-- Find the part named "Baseplate" inside Workspace</span>
+<span class="code-keyword">local</span> baseplate = workspace.Baseplate
+
+<span class="code-comment">-- Modern wait function (Never use wait() without task.)</span>
+task.wait(<span class="code-keyword">3</span>)
+
+<span class="code-comment">-- Change its color and make it invisible</span>
+baseplate.BrickColor = BrickColor.<span class="code-func">new</span>(<span class="code-string">"Really red"</span>)
+baseplate.Transparency = <span class="code-keyword">0.5</span></code></pre>
+                    </div>
+                </div>
+                
+                <div class="lesson-callout">
+                    <strong>Critical Rule:</strong> Notice `task.wait(3)`? Many old tutorials use `wait(3)`. The old `wait()` is deprecated and runs slower than the engine's frame rate. <strong>Always use `task.wait()`</strong> for accurate, optimized delays.
+                </div>
+
+                <div class="lesson-nav-footer">
+                    <a href="building-first-game.html" class="lesson-nav-prev">
+                        <span class="nav-dir">Previous Lesson</span>
+                        <span class="nav-lesson-name">4. Building a Game</span>
+                    </a>
+                    <a href="events-connections.html" class="lesson-nav-next">
+                        <span class="nav-dir">Next Lesson</span>
+                        <span class="nav-lesson-name">6. Events & Connections</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lesson-sidebar" id="lesson-sidebar">
+                <div class="sidebar-toc">
+                    <h4 class="sidebar-heading">On This Page</h4>
+                    <a href="#section-1" class="toc-link">Creating a Script</a>
+                    <a href="#section-2" class="toc-link">The Print Function</a>
+                    <a href="#section-3" class="toc-link">Variables</a>
+                    <a href="#section-4" class="toc-link">Modifying Properties</a>
+                </div>
+                <div class="sidebar-cta">
+                    <h4 class="sidebar-heading">Unlock All Lessons</h4>
+                    <p>Get access to advanced Pro lessons, project files, and priority support.</p>
+                    <a href="../pro.html" class="btn btn-primary btn-full">Join Patreon</a>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <footer id="main-footer" class="footer" style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 ekian.dev</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

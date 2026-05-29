@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Pro — ekian.dev</title>
+    <meta name="description" content="Unlock every lesson, project walkthrough, and source file. Go Pro with ekian.dev on Patreon.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* --- Pro Page Specific --- */
+        .pro-page { padding-top: 64px; }
+
+        .pro-hero {
+            padding: 80px 24px 64px;
+            text-align: center;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .pro-hero-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: var(--black);
+            color: var(--white);
+            padding: 6px 16px;
+            border-radius: 100px;
+            margin-bottom: 24px;
+        }
+
+        .pro-hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: var(--black);
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .pro-hero-sub {
+            font-size: 17px;
+            color: var(--gray-600);
+            max-width: 540px;
+            margin: 0 auto 36px;
+            line-height: 1.65;
+        }
+
+        .pro-price-display {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .pro-price-big {
+            font-size: 56px;
+            font-weight: 800;
+            color: var(--black);
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .pro-price-period {
+            font-size: 16px;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        .pro-hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .pro-hero-note {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        /* --- What You Get --- */
+        .pro-section {
+            padding: 80px 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pro-section-alt {
+            background: var(--off-white);
+            max-width: 100%;
+        }
+
+        .pro-section-alt .pro-section-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pro-section-title {
+            font-size: clamp(24px, 3.5vw, 34px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--black);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .pro-section-subtitle {
+            font-size: 15px;
+            color: var(--gray-600);
+            text-align: center;
+            max-width: 520px;
+            margin: 0 auto 48px;
+            line-height: 1.6;
+        }
+
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .benefit-card {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            background: var(--white);
+            transition: all 0.25s ease;
+        }
+
+        .benefit-card:hover {
+            border-color: var(--gray-400);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .benefit-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-100);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--gray-600);
+        }
+
+        .benefit-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        .benefit-desc {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        /* --- Locked Lessons Preview --- */
+        .locked-lessons-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .locked-lesson-row {
+            display: grid;
+            grid-template-columns: 40px 1fr auto;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            border: 1px solid var(--gray-100);
+            border-radius: var(--radius-sm);
+            background: var(--white);
+        }
+
+        .locked-lesson-row .ll-num {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-400);
+        }
+
+        .locked-lesson-row .ll-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .locked-lesson-row .ll-level {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 2px 8px;
+            border-radius: 100px;
+        }
+
+        .ll-level-int {
+            background: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .ll-level-adv {
+            background: var(--gray-800);
+            color: var(--gray-200);
+        }
+
+        /* --- Comparison Table --- */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 32px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .comparison-table th {
+            font-weight: 700;
+            color: var(--black);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .comparison-table td:first-child {
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+
+        .comparison-table td:nth-child(2),
+        .comparison-table td:nth-child(3) {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .comparison-table th:nth-child(2),
+        .comparison-table th:nth-child(3) {
+            text-align: center;
+        }
+
+        .table-check { color: var(--gray-800); }
+        .table-x { color: var(--gray-300); }
+
+        .col-pro-header {
+            background: var(--black);
+            color: var(--white) !important;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        }
+
+        /* --- Testimonial / Social Proof --- */
+        .pro-quotes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .pro-quote {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            background: var(--white);
+        }
+
+        .pro-quote-text {
+            font-size: 14px;
+            color: var(--gray-700);
+            line-height: 1.6;
+            margin-bottom: 14px;
+            font-style: italic;
+        }
+
+        .pro-quote-author {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        .pro-quote-role {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        /* --- FAQ on Pro Page --- */
+        .pro-faq {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* --- Final CTA --- */
+        .pro-final-cta {
+            text-align: center;
+            padding: 80px 24px;
+            background: var(--black);
+        }
+
+        .pro-final-cta h2 {
+            font-size: clamp(24px, 3.5vw, 36px);
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+        }
+
+        .pro-final-cta p {
+            color: var(--gray-500);
+            font-size: 16px;
+            margin-bottom: 28px;
+        }
+
+        .pro-final-cta .btn-primary {
+            background: var(--white);
+            color: var(--black);
+            font-size: 16px;
+            padding: 16px 36px;
+        }
+
+        .pro-final-cta .btn-primary:hover {
+            background: var(--gray-200);
+        }
+
+        .pro-guarantee {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .benefits-grid { grid-template-columns: 1fr; }
+            .pro-quotes { grid-template-columns: 1fr; }
+            .comparison-table { font-size: 13px; }
+            .comparison-table th, .comparison-table td { padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="index.html#lessons" class="nav-link">Lessons</a>
+                <a href="index.html#pricing" class="nav-link">Pricing</a>
+                <a href="index.html#faq" class="nav-link">FAQ</a>
+            </div>
+            <div class="nav-actions">
+                <a href="index.html#lessons" class="btn btn-secondary">Browse Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="index.html#curriculum" class="mobile-link">Curriculum</a>
+        <a href="index.html#lessons" class="mobile-link">Lessons</a>
+        <a href="index.html#pricing" class="mobile-link">Pricing</a>
+        <a href="index.html#faq" class="mobile-link">FAQ</a>
+    </div>
+
+    <div class="pro-page">
+        <!-- Hero -->
+        <section class="pro-hero" id="pro-hero">
+            <div class="pro-hero-badge">Pro Membership</div>
+            <h1>Unlock the full<br>curriculum.</h1>
+            <p class="pro-hero-sub">Get access to every lesson, every project walkthrough, downloadable source files, and priority support. One simple membership through Patreon.</p>
+            <div class="pro-price-display">
+                <span class="pro-price-big">$8</span>
+                <span class="pro-price-period">/ month</span>
+            </div>
+            <div class="pro-hero-actions">
+                <a href="https://www.patreon.com/cw/Ekian/membership" target="_blank" rel="noopener" class="btn btn-primary btn-lg" id="btn-pro-join-hero">Join on Patreon</a>
+                <a href="#pro-whats-included" class="btn btn-ghost btn-lg">See What's Included</a>
+            </div>
+            <p class="pro-hero-note">Cancel anytime. No contracts, no commitments.</p>
+        </section>
+
+
+
+        <!-- What You Get -->
+        <section class="pro-section" id="pro-whats-included">
+            <h2 class="pro-section-title">Everything you need to go from<br>beginner to professional.</h2>
+            <p class="pro-section-subtitle">Free gets you started. Pro gets you there.</p>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">&#128218;</div>
+                    <h3 class="benefit-title">All 42 Lessons Unlocked</h3>
+                    <p class="benefit-desc">Access every lesson across all three tracks — Foundations, Systems & Architecture, and Professional Development. No drip-feeding, everything is available immediately.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">&#9881;</div>
+                    <h3 class="benefit-title">3 Complete Project Walkthroughs</h3>
+                    <p class="benefit-desc">Build a Coin Collector, Obby, and full Tycoon game from scratch. Step-by-step guides that result in publishable, polished games.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">&#128190;</div>
+                    <h3 class="benefit-title">Downloadable Source Files</h3>
+                    <p class="benefit-desc">Every project and lesson includes downloadable .rbxl files and ModuleScript source code you can open directly in Roblox Studio.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">&lt;/&gt;</div>
+                    <h3 class="benefit-title">Production-Ready Code Patterns</h3>
+                    <p class="benefit-desc">Learn the same architecture patterns used in games with millions of visits. OOP, state machines, data management, and service-based code organization.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">&#128176;</div>
+                    <h3 class="benefit-title">Monetization Guides</h3>
+                    <p class="benefit-desc">Learn how to implement Game Passes, Developer Products, and in-game economies. Build systems that players want to spend Robux on.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">&#128172;</div>
+                    <h3 class="benefit-title">Priority Support</h3>
+                    <p class="benefit-desc">Stuck on something? Pro members get priority help. Ask questions, get code reviews, and get unblocked faster than anywhere else.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Locked Lessons Preview -->
+        <section class="pro-section pro-section-alt" id="pro-lessons-preview">
+            <div class="pro-section-inner">
+                <h2 class="pro-section-title">Lessons you'll unlock.</h2>
+                <p class="pro-section-subtitle">These lessons are currently locked behind Pro. Here's everything you'll get access to.</p>
+
+                <div class="locked-lessons-list">
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">13</span>
+                        <span class="ll-title">Object-Oriented Programming in Luau</span>
+                        <span class="ll-level ll-level-int">Intermediate</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">14</span>
+                        <span class="ll-title">Data Persistence with DataStores</span>
+                        <span class="ll-level ll-level-int">Intermediate</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">16</span>
+                        <span class="ll-title">Tweening &amp; Animations</span>
+                        <span class="ll-level ll-level-int">Intermediate</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">17</span>
+                        <span class="ll-title">Building an Inventory System</span>
+                        <span class="ll-level ll-level-int">Intermediate</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">18</span>
+                        <span class="ll-title">Project: Build a Complete Obby</span>
+                        <span class="ll-level ll-level-int">Intermediate</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">19</span>
+                        <span class="ll-title">Advanced Architecture Patterns</span>
+                        <span class="ll-level ll-level-adv">Advanced</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">20</span>
+                        <span class="ll-title">Designing a Combat System</span>
+                        <span class="ll-level ll-level-adv">Advanced</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">21</span>
+                        <span class="ll-title">Monetization: Game Passes &amp; Dev Products</span>
+                        <span class="ll-level ll-level-adv">Advanced</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">22</span>
+                        <span class="ll-title">Performance &amp; Optimization</span>
+                        <span class="ll-level ll-level-adv">Advanced</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">23</span>
+                        <span class="ll-title">Publishing &amp; Growing Your Game</span>
+                        <span class="ll-level ll-level-adv">Advanced</span>
+                    </div>
+                    <div class="locked-lesson-row">
+                        <span class="ll-num">24</span>
+                        <span class="ll-title">Project: Build a Tycoon Game</span>
+                        <span class="ll-level ll-level-adv">Advanced</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Free vs Pro Comparison -->
+        <section class="pro-section" id="pro-comparison">
+            <h2 class="pro-section-title">Free vs. Pro</h2>
+            <p class="pro-section-subtitle">See exactly what changes when you upgrade.</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Free</th>
+                        <th class="col-pro-header">Pro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Beginner lessons (14)</td>
+                        <td><span class="table-check">&#10003;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>Core intermediate lessons (4)</td>
+                        <td><span class="table-check">&#10003;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>Code examples in lessons</td>
+                        <td><span class="table-check">&#10003;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>Coin Collector project</td>
+                        <td><span class="table-check">&#10003;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>All intermediate lessons (16)</td>
+                        <td><span class="table-x">&#10005;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>All advanced lessons (12)</td>
+                        <td><span class="table-x">&#10005;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>Obby project walkthrough</td>
+                        <td><span class="table-x">&#10005;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>Tycoon project walkthrough</td>
+                        <td><span class="table-x">&#10005;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>Downloadable .rbxl source files</td>
+                        <td><span class="table-x">&#10005;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>OOP &amp; architecture patterns</td>
+                        <td><span class="table-x">&#10005;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>Monetization guides</td>
+                        <td><span class="table-x">&#10005;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                    <tr>
+                        <td>Priority support</td>
+                        <td><span class="table-x">&#10005;</span></td>
+                        <td><span class="table-check">&#10003;</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Social Proof -->
+        <section class="pro-section pro-section-alt" id="pro-testimonials">
+            <div class="pro-section-inner">
+                <h2 class="pro-section-title">What members are saying.</h2>
+
+                <div class="pro-quotes">
+                    <div class="pro-quote">
+                        <p class="pro-quote-text">"I spent months watching random YouTube tutorials and never finished a game. This curriculum had me building and publishing within weeks. The structure makes all the difference."</p>
+                        <p class="pro-quote-author">Alex M.</p>
+                        <p class="pro-quote-role">Published 3 games on Roblox</p>
+                    </div>
+                    <div class="pro-quote">
+                        <p class="pro-quote-text">"The OOP and DataStore lessons alone are worth the subscription. Finally understood metatables and how to properly save player data without losing it."</p>
+                        <p class="pro-quote-author">Jordan K.</p>
+                        <p class="pro-quote-role">Roblox Developer</p>
+                    </div>
+                    <div class="pro-quote">
+                        <p class="pro-quote-text">"The tycoon project walkthrough taught me more about real game architecture than anything else I've tried. My game hit 1K concurrent players last month."</p>
+                        <p class="pro-quote-author">Sam T.</p>
+                        <p class="pro-quote-role">Indie Game Developer</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pro FAQ -->
+        <section class="pro-section" id="pro-faq">
+            <h2 class="pro-section-title">Questions about Pro.</h2>
+            <div class="pro-faq">
+                <div class="faq-list" id="pro-faq-list">
+                    <div class="faq-item visible">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>How do I access Pro lessons after subscribing?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>After subscribing on Patreon, you'll be automatically invited to our private Discord server. All Pro lessons, project files, and support channels are hosted directly in the Discord!</p>
+                        </div>
+                    </div>
+                    <div class="faq-item visible">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I cancel anytime?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes. Cancel your Patreon membership any time with one click. There's no contract, no hidden fees, and no cancellation process. You keep access until the end of your current billing period.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item visible">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Do I need to know coding to start?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Not at all. The free beginner track teaches everything from scratch. Pro picks up where free ends, but you can subscribe at any time — even as a beginner — to have everything ready when you get there.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item visible">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is the content updated?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes. All lessons are maintained and updated for the latest Roblox APIs and Luau features. When Roblox ships breaking changes, we update the affected lessons promptly.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item visible">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>What if I'm already intermediate?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Skip ahead. The curriculum is structured but not gated — you can jump to any lesson that matches your level. Most intermediate and all advanced content is Pro-only, so you'll get the most value from upgrading.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="pro-final-cta" id="pro-final-cta">
+            <h2>Ready to go Pro?</h2>
+            <p>Join on Patreon and unlock every lesson, project, and resource today.</p>
+            <a href="https://www.patreon.com/cw/Ekian/membership" target="_blank" rel="noopener" class="btn btn-primary btn-lg" id="btn-pro-join-final">Join on Patreon — $8/month</a>
+            <p class="pro-guarantee">Cancel anytime. Instant access to all Pro content.</p>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer id="main-footer" class="footer">
+        <div class="container">
+            <div class="footer-bottom" style="border-top: none;">
+                <p>&copy; 2026 ekian.dev. Not affiliated with Roblox Corporation.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

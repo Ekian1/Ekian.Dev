@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 15: UI Basics — ekian.dev</title>
+    <meta name="description" content="Design beautiful player interfaces, understand Scale vs Offset, and script buttons.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../lesson.css">
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="../index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="../index.html#lessons" class="nav-link">Lessons</a>
+                <a href="../pro.html" class="nav-link">Pro Access</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../index.html#lessons" class="btn btn-secondary">All Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <article class="lesson-page" id="lesson-content">
+        <div class="lesson-hero-bar">
+            <div class="container">
+                <div class="lesson-breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <a href="../index.html#lessons">Lessons</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>Lesson 15</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-container">
+            <div class="lesson-body">
+                <div class="lesson-header-info">
+                    <span class="lesson-level level-intermediate">Intermediate</span>
+                    <span class="lesson-est">Free</span>
+                </div>
+
+                <h1 id="lesson-page-title">UI Basics</h1>
+                <p class="lesson-lead">A game with great mechanics but a terrible UI will fail. Let's learn how to build responsive, scripted 2D interfaces for your players.</p>
+                <hr class="lesson-divider">
+                
+                <h2 id="section-1">The StarterGui</h2>
+                <p>All UI elements are created inside the <strong>StarterGui</strong> folder in the Explorer. When a player's character spawns, everything inside StarterGui is copied directly into their personal <code>PlayerGui</code> folder.</p>
+                <p>The base container for any UI is a <code>ScreenGui</code>. You must create a ScreenGui inside StarterGui before you can add any text or buttons.</p>
+
+                <h2 id="section-2">Scale vs. Offset (Critical Concept)</h2>
+                <p>Every UI element's Size and Position uses a <code>UDim2</code> coordinate, formatted like this: <code>{X Scale, X Offset}, {Y Scale, Y Offset}</code>.</p>
+                <ul class="lesson-steps">
+                    <li><strong>Offset:</strong> Exact pixel measurements. A button sized `{0, 100}, {0, 50}` will be exactly 100x50 pixels. It looks great on PC, but tiny on mobile!</li>
+                    <li><strong>Scale:</strong> A percentage of the screen. A button sized `{0.5, 0}, {0.5, 0}` will take up exactly 50% of the screen width and 50% of the height, no matter if the player is on an iPhone or a 4K monitor.</li>
+                </ul>
+                <p><strong>Pro Tip:</strong> Professional games rely heavily on Scale for responsive design, combined with a <code>UIAspectRatioConstraint</code> to prevent elements from stretching into weird shapes on ultra-wide monitors.</p>
+
+                <h2 id="section-3">Scripting Buttons</h2>
+                <p>Because UI only exists on the player's screen, you must use <strong>LocalScripts</strong> to make buttons work. A Server Script placed inside a UI element will not function correctly.</p>
+
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-filename">LocalScript inside a TextButton</span>
+                    </div>
+                    <div class="code-window-body">
+<pre><code><span class="code-keyword">local</span> button = script.Parent
+
+button.MouseButton1Click:Connect(<span class="code-keyword">function</span>()
+    <span class="code-func">print</span>(<span class="code-string">"The button was clicked!"</span>)
+    
+    <span class="code-comment">-- Optional: If you need to buy an item, fire a remote!</span>
+    <span class="code-comment">-- BuyItemEvent:FireServer("Sword")</span>
+<span class="code-keyword">end</span>)</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="section-4">Layout Modifiers</h2>
+                <p>Instead of manually positioning 50 inventory slots, you can insert a <code>UIGridLayout</code> into a Frame. The grid layout automatically snaps all child elements into a perfect grid, saving you hours of tedious work.</p>
+
+                <div class="lesson-nav-footer">
+                    <a href="../pro.html" class="lesson-nav-prev">
+                        <span class="nav-dir">Go Pro</span>
+                        <span class="nav-lesson-name">14. DataStores (Pro)</span>
+                    </a>
+                    <a href="../pro.html" class="lesson-nav-next">
+                        <span class="nav-dir">Go Pro</span>
+                        <span class="nav-lesson-name">16. Tweening (Pro)</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lesson-sidebar" id="lesson-sidebar">
+                <div class="sidebar-toc">
+                    <h4 class="sidebar-heading">On This Page</h4>
+                    <a href="#section-1" class="toc-link">The StarterGui</a>
+                    <a href="#section-2" class="toc-link">Scale vs. Offset</a>
+                    <a href="#section-3" class="toc-link">Scripting Buttons</a>
+                    <a href="#section-4" class="toc-link">Layout Modifiers</a>
+                </div>
+                <div class="sidebar-cta">
+                    <h4 class="sidebar-heading">Unlock All Lessons</h4>
+                    <p>Get access to advanced Pro lessons, project files, and priority support.</p>
+                    <a href="../pro.html" class="btn btn-primary btn-full">Join Patreon</a>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <footer id="main-footer" class="footer" style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 ekian.dev</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
