@@ -55,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             lessonCards.forEach(card => {
                 const level = card.dataset.level;
+                if (level && !['beginner', 'intermediate', 'advanced'].includes(level)) {
+                    console.warn('Invalid lesson level:', level);
+                    return;
+                }
                 const access = card.dataset.access;
 
                 let show = false;
@@ -131,10 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Smooth scroll for anchor links ---
+    const validSections = ['curriculum', 'lessons', 'pricing', 'faq', 'why'];
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
             const href = anchor.getAttribute('href');
-            if (href === '#') return;
+            if (!href || !href.startsWith('#') || href === '#') return;
+            
+            const sectionId = href.substring(1);
+            if (!validSections.includes(sectionId)) {
+                console.warn('Invalid section:', sectionId);
+                return;
+            }
 
             const target = document.querySelector(href);
             if (target) {
@@ -151,15 +162,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Helper paths ---
-    const isInSubdir = window.location.pathname.includes('/lessons/');
-    const proPageUrl = isInSubdir ? '../pro.html' : 'pro.html';
+    function getProPageUrl() {
+        const basePath = window.location.origin;
+        return new URL('pro.html', basePath).href;
+    }
+    const proPageUrl = getProPageUrl();
 
     // --- Standard Pro Card Click Handler ---
-    document.querySelectorAll('.lesson-card[data-access="pro"]').forEach(card => {
-        card.addEventListener('click', (e) => {
+    document.addEventListener('click', (e) => {
+        const card = e.target.closest('.lesson-card[data-access="pro"]');
+        if (card) {
             e.preventDefault();
             window.location.href = proPageUrl;
-        });
+        }
     });
 
     // --- Code window typing effect on hero ---
