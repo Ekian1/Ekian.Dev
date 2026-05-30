@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4: Building Your First Game — ekian.dev</title>
+    <meta name="description" content="Put your knowledge to the test by building a complete mini-obby.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../lesson.css">
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span>
+                <span class="logo-text">ekian.dev</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="../index.html#curriculum" class="nav-link">Curriculum</a>
+                <a href="../index.html#lessons" class="nav-link">Lessons</a>
+                <a href="../pro.html" class="nav-link">Pro Access</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../index.html#lessons" class="btn btn-secondary">All Lessons</a>
+            </div>
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <article class="lesson-page" id="lesson-content">
+        <div class="lesson-hero-bar">
+            <div class="container">
+                <div class="lesson-breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <a href="../index.html#lessons">Lessons</a>
+                    <span class="breadcrumb-sep">/</span>
+                    <span>Lesson 4</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-container">
+            <div class="lesson-body">
+                <div class="lesson-header-info">
+                    <span class="lesson-level level-beginner">Beginner</span>
+                    <span class="lesson-est">Free</span>
+                </div>
+
+                <h1 id="lesson-page-title">Building Your First Game</h1>
+                <p class="lesson-lead">It's time to combine everything we've learned about Parts, Properties, and the Explorer to build a playable mini-obby.</p>
+                <hr class="lesson-divider">
+                
+                <h2 id="section-1">The SpawnLocation</h2>
+                <p>When you hit play, your character spawns in the middle of the world. To control this, go to the <strong>Model</strong> tab and click the <strong>Spawn</strong> button. This places a <code>SpawnLocation</code> part. Whenever you hit Play, your character will now spawn directly on top of this block.</p>
+                
+                <h2 id="section-2">Building the Obstacles</h2>
+                <p>Create a series of jumping platforms. Use the Scale tool to make them different sizes. To make it challenging, try placing them further apart or higher up.</p>
+                <div class="lesson-callout">
+                    <strong>Critical Check:</strong> Did you remember to Anchor every single platform? If you don't, as soon as your character touches them, they will fall into the void!
+                </div>
+
+                <h2 id="section-3">Adding a Finish Line</h2>
+                <p>Create a large platform at the end of your jumps. Use the Properties window to change its Material to <strong>Neon</strong> and its Color to bright green. This visually signals to the player that they have won.</p>
+
+                <h2 id="section-4">Playtesting</h2>
+                <p>Go to the Home tab and click the large blue <strong>Play</strong> button. Your avatar will spawn in, and you can test your jumps. If a jump is impossible, press <strong>Stop</strong> (the red square), adjust the parts, and try again.</p>
+                <p>Congratulations! You've just created a functional environment. Now, it's time to learn how to make it interactive using code.</p>
+
+                <div class="lesson-nav-footer">
+                    <a href="explorer-properties.html" class="lesson-nav-prev">
+                        <span class="nav-dir">Previous Lesson</span>
+                        <span class="nav-lesson-name">3. Explorer & Properties</span>
+                    </a>
+                    <a href="your-first-script.html" class="lesson-nav-next">
+                        <span class="nav-dir">Next Lesson</span>
+                        <span class="nav-lesson-name">5. Your First Script</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="lesson-sidebar" id="lesson-sidebar">
+                <div class="sidebar-toc">
+                    <h4 class="sidebar-heading">On This Page</h4>
+                    <a href="#section-1" class="toc-link">The SpawnLocation</a>
+                    <a href="#section-2" class="toc-link">Building Obstacles</a>
+                    <a href="#section-3" class="toc-link">Adding a Finish Line</a>
+                    <a href="#section-4" class="toc-link">Playtesting</a>
+                </div>
+                <div class="sidebar-cta">
+                    <h4 class="sidebar-heading">Unlock All Lessons</h4>
+                    <p>Get access to advanced Pro lessons, project files, and priority support.</p>
+                    <a href="../pro.html" class="btn btn-primary btn-full">Join Patreon</a>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <footer id="main-footer" class="footer" style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 ekian.dev</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
