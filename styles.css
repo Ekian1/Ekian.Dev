@@ -17,9 +17,9 @@
     --gray-100: #eeeeee;
     --gray-200: #e0e0e0;
     --gray-300: #cccccc;
-    --gray-400: #aaaaaa;
-    --gray-500: #888888;
-    --gray-600: #666666;
+    --gray-400: #767676;
+    --gray-500: #666666;
+    --gray-600: #555555;
     --gray-700: #444444;
     --gray-800: #2a2a2a;
     --gray-900: #1a1a1a;
@@ -60,6 +60,12 @@ body {
 a {
     color: inherit;
     text-decoration: none;
+}
+
+/* --- Accessibility --- */
+*:focus-visible {
+    outline: 2px solid var(--black);
+    outline-offset: 2px;
 }
 
 img {
@@ -1203,17 +1209,29 @@ img {
     }
 
     .lesson-card {
-        grid-template-columns: 36px 1fr auto;
-        gap: 14px;
-        padding: 16px 18px;
+        grid-template-columns: 32px 1fr;
+        align-items: flex-start;
+        padding: 18px 16px;
+        gap: 12px;
+    }
+
+    .lesson-number {
+        margin-top: 2px;
+    }
+
+    .lesson-access {
+        grid-column: 2;
+        justify-self: flex-start;
+        margin-top: 4px;
     }
 
     .lesson-arrow {
         display: none;
     }
 
-    .lesson-desc {
-        display: none;
+    .lesson-meta {
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
     .features-grid {
